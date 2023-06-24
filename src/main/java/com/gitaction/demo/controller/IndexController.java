@@ -20,6 +20,7 @@ public class IndexController {
     public String action1(){
         return "action1";
     }
+    //첫번째 시도는 실패입니당.
 
     @ResponseBody
     @GetMapping("/action2")
