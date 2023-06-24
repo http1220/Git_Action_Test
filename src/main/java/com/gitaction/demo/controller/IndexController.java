@@ -27,5 +27,12 @@ public class IndexController {
     public String action2(){
         return "action2";
     }
+    //두번째 시도는 실패입니당.
+
+    @ResponseBody
+    @GetMapping("/action3")
+    public String action3(){
+        return "action3";
+    }
 
 }
