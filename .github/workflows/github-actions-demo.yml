@@ -35,12 +35,12 @@ jobs:
           path: "./build/libs/*.jar"
           
       - name: Create distribute
-        run: mkdir ~/dist
+        run: mkdir ~/deploy
       - name: Download build artifact for job
         uses: actions/download-artifact@v3
         with:
           name: project_artifact
-          path: dist
+          path: deploy
           
       - name: Show structure of downloaded files
         run: |
