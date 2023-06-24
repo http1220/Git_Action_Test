@@ -33,6 +33,7 @@ jobs:
           name: project_artifact
           ## Gradle의 경우
           path: "./build/libs/*.jar"
+          
   distribute:
     ## 빌드가 선행되야함.
   #    if: ${{ always() }}
@@ -59,7 +60,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           rm: true
-          source: "dist/*.jar"
+          source: "deploy/*.jar"
           target: /home/ubuntu/devrun
           strip_components: 1
       - name: Show structure of transfer files
