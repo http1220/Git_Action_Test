@@ -20,7 +20,9 @@ jobs:
           distribution: 'adopt'
 
       - name: Build and package with Gradle
-        run: chmod +x ./gradlew
+        run: |
+          chmod +x ./gradlew bootJar
+          echo "Generated JAR file path: $(realpath build/libs/*.jar)"
 
       - name: Transfer JAR to EC2 server
         uses: appleboy/scp-action@master
