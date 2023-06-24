@@ -33,9 +33,15 @@ jobs:
           name: project_artifact
           ## Gradle의 경우
           path: "./build/libs/*.jar"
-          
+  distribute:
+    ## 빌드가 선행되야함.
+  #    if: ${{ always() }}
+      needs: [ build ]
+      runs-on: ubuntu-latest
+      steps:
       - name: Create distribute
         run: mkdir ~/deploy
+        
       - name: Download build artifact for job
         uses: actions/download-artifact@v3
         with:
@@ -44,7 +50,7 @@ jobs:
           
       - name: Show structure of downloaded files
         run: |
-          ls -alh dist
+          ls -alh deploy
           
       - name: Transfer JAR to EC2 server
         uses: appleboy/scp-action@master
@@ -55,3 +61,28 @@ jobs:
           rm: true
           source: "dist/*.jar"
           target: /home/ubuntu/devrun
+          strip_components: 1
+      - name: Show structure of transfer files
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_SERVER_IP }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/devrun/deploy
+            ls -alh
+  service_restart:
+    ## 앞 작업이 선행되고 성공해야 함
+    needs: [ build, distribute ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call service restart
+        uses: appleboy/ssh-action@master
+        with:
+          username: ubuntu
+          host: ${{ secrets.EC2_SERVER_IP }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/devrun/deploy
+            sudo java -jar demo-0.0.1-SNAPSHOT.jar
+            echo "서비스 시작"
